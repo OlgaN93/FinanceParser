@@ -3,6 +3,12 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin
+/.idea/inspectionProfiles/Project_Default.xml
+/Parser.iml
+/movementList.csv
+/.idea/modules.xml
+/.idea/misc.xml
+/.idea/.gitignore
 
 ### Eclipse ###
 .apt_generated
@@ -28,3 +34,4 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/.idea/vcs.xml
