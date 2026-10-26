@@ -2,7 +2,6 @@ package movements;
 
 import transaction.Transaction;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -43,7 +42,7 @@ public class Movements {
         return incomeSum;
     }
 
-    public Map<String, BigDecimal> getExpensesByCompany() throws IOException {
+    public Map<String, BigDecimal> getExpensesByCompany() {
         //TODO метод получения расходов по организациям в виде строк
 
         Map<String, BigDecimal> expensesByCompany = new HashMap<>();

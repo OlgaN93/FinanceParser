@@ -9,6 +9,7 @@ out/
 /.idea/modules.xml
 /.idea/misc.xml
 /.idea/.gitignore
+/Todo.txt
 
 ### Eclipse ###
 .apt_generated
