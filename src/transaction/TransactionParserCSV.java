@@ -13,13 +13,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Класс, представляющий парсинг транзакций из файла типа csv
+ */
 public class TransactionParserCSV implements TransactionParser {
-    Path pathToCSV;
+    private final Path pathToCSV;
 
+    /**
+     * Конструктор
+     * @param pathFile путь к файлу
+     */
     public TransactionParserCSV(Path pathFile) {
         this.pathToCSV = pathFile;
     }
 
+    /**
+     * {@inheritDoc}
+     * Пропускает первую строку с заголовками
+     * @return список транзакций
+     * @throws IOException если возникают ошибки при чтении файла
+     */
     @Override
     public List<Transaction> transactionsRead() throws IOException {
         final List<Transaction> transactions = new ArrayList<>();
@@ -37,6 +50,11 @@ public class TransactionParserCSV implements TransactionParser {
         return transactions;
     }
 
+    /**
+     * Метод создает объект транзакции
+     * @param line считанная строка файла
+     * @return объект транзакции
+     */
     private Transaction getTransaction(String line) {
         String[] columns = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
         String accountType = columns[0];
@@ -58,5 +76,4 @@ public class TransactionParserCSV implements TransactionParser {
         return new Transaction(accountType, accountNumber, currency, date, reference,
                 description, income, expense);
     }
-
 }

@@ -2,27 +2,35 @@ package consoleInterface;
 
 import consoleInterface.constants.ConsoleInterfaceConstants;
 import movements.Movements;
-import transaction.TransactionParserCSV;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Консольный интерфейс для взаимодействия с пользователем
+ */
 public class ConsoleInterface {
+    private final Movements movements;
 
-    public static void consoleInterface(Path pathToFile) throws IOException {
-        System.out.println(ConsoleInterfaceConstants.FILE_PROCESSING_MESSAGE);
+    /**
+     * Конструктор
+     * @param movements объект класса, выполняющего команды
+     */
+    public ConsoleInterface(Movements movements) {
+        this.movements = movements;
+    }
 
-        TransactionParserCSV parser = new TransactionParserCSV(pathToFile);
-        Movements movements = new Movements(parser.transactionsRead());
-
+    /**
+     * Метод выводит сообщения, принимает команды из System.in, цикл завершается по команде EXIT,
+     * при неверной команде выводится сообщение и запрос повторяется
+     */
+    public void consoleInterface() {
         System.out.println(ConsoleInterfaceConstants.WELCOME_MESSAGE);
 
         try (Scanner sc = new Scanner(System.in)) {
-            Command command;
+            Menu item;
 
             do {
 
@@ -30,27 +38,15 @@ public class ConsoleInterface {
                 String input = sc.nextLine();
 
                 try {
-                    command = Command.getCommand(input);
+                    item = Menu.getCommand(input);
                 } catch (IllegalArgumentException iae) {
-                    command = null;
+                    item = null;
                 }
 
-                switch (command) {
+                switch (item) {
                     case EXPENSE_SUM -> System.out.println(movements.getExpenseSum());
                     case INCOME_SUM -> System.out.println(movements.getIncomeSum());
-                    case EXPENSES_BY_COMPANY -> {
-                        Map<String, BigDecimal> expensesByCompany = movements.getExpensesByCompany();
-                        String expensesByCompanyString = expensesByCompany.entrySet().stream()
-                                .sorted(Map.Entry.comparingByKey())
-                                .map(e ->
-                                        String.format(ConsoleInterfaceConstants.DISPLAYING_FORMAT_EXPENSES_BY_COMPANY,
-                                                e.getKey(), e.getValue()
-                                        )
-                                )
-                                .collect(Collectors.joining(System.lineSeparator()));
-
-                        System.out.println(expensesByCompanyString);
-                    }
+                    case EXPENSES_BY_COMPANY -> System.out.println(this.expensesByCompanyOutput());
                     case HELP -> System.out.println(ConsoleInterfaceConstants.HELP_MESSAGE);
                     case EXIT -> {}
                     case null -> System.out.println(ConsoleInterfaceConstants.COMMAND_IS_INVALID + " " +
@@ -58,9 +54,25 @@ public class ConsoleInterface {
                     );
                 }
 
-            } while (command == null || !(command.equals(Command.EXIT)));
+            } while (item == null || !(item.equals(Menu.EXIT)));
 
             System.out.println(ConsoleInterfaceConstants.FAREWELL_MESSAGE);
         }
+    }
+
+    /**
+     * Метод приводит список компаний и их расходов к формату, требующемуся для вывода информации на экран
+     * @return строка вывода
+     */
+    private String expensesByCompanyOutput() {
+        Map<String, BigDecimal> expensesByCompany = movements.getExpensesByCompany();
+        return expensesByCompany.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(e ->
+                        String.format(ConsoleInterfaceConstants.DISPLAYING_FORMAT_EXPENSES_BY_COMPANY,
+                                e.getKey(), e.getValue()
+                        )
+                )
+                .collect(Collectors.joining(System.lineSeparator()));
     }
 }
